@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday Shruuuu 🎂💕</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        background: black;
+        color: white;
+        text-align: center;
+        overflow-x: hidden;
+      }
+      canvas#fireworks {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+      h1 {
+        font-size: 2em;
+        margin-top: 20px;
+        color: #ff69b4;
+      }
+      .gallery {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px auto;
+        gap: 20px;
+        max-width: 95%;
+      }
+      .gallery img {
+        width: 100%;
+        max-width: 350px;
+        border-radius: 15px;
+        box-shadow: 0 0 15px pink;
+      }
+      .caption {
+        margin-top: 8px;
+        font-size: 1.1em;
+        color: #ffe4e1;
+      }
+      .cake-section {
+        margin: 40px auto;
+      }
+      .cake {
+        position: relative;
+        width: 200px;
+        height: 150px;
+        margin: 0 auto;
+        background: #ffb6c1;
+        border-radius: 0 0 20px 20px;
+        overflow: hidden;
+      }
+      .cake-text {
+        position: absolute;
+        bottom: 10px;
+        width: 100%;
+        font-size: 14px;
+        font-weight: bold;
+        color: #8b0000;
+        text-align: center;
+      }
+      .cake-photo {
+        width: 250px;
+        max-width: 90%;
+        border-radius: 15px;
+        box-shadow: 0 0 20px pink;
+        position: relative;
+        transition: transform 0.8s ease, opacity 0.8s ease;
+      }
+      .cake-photo.cut {
+        transform: translateY(20px) scale(0.95) rotate(-2deg);
+        opacity: 0.9;
+      }
+      .cut-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: hotpink;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-size: 1.2em;
+        cursor: pointer;
+        box-shadow: 0 0 10px pink;
+      }
+      .confetti {
+        position: fixed;
+        top: 0;
+        width: 10px;
+        height: 10px;
+        background: red;
+        animation: fall 3s linear infinite;
+      }
+      @keyframes fall {
+        to {
+          transform: translateY(100vh) rotate(720deg);
+        }
+      }
+      .puzzle-container {
+        margin: 40px auto;
+        width: 300px;
+        height: 300px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 2px;
+        border: 2px solid white;
+      }
+      .tile {
+        width: 100%;
+        height: 100%;
+        background-size: 300px 300px;
+        cursor: grab;
+      }
+      .video-popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+      }
+      .video-popup video {
+        width: 90%;
+        max-width: 400px;
+        border: 5px solid white;
+        border-radius: 15px;
+      }
+      .close-btn {
+        position: absolute;
+        top: 1px;
+        right: 20px;
+        font-size: 28px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+        z-index: 500;
+      }
+      .candle-row {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 30px;
+        margin: 15px auto;
+        width: fit-content;
+      }
+
+      .candle {
+        width: 18px;
+        height: 60px;
+        background: #fff5cc;
+        border: 2px solid #d1a54c;
+        border-radius: 3px;
+        position: relative;
+        box-shadow: 0 0 3px #444 inset;
+      }
+
+      .flame {
+        width: 15px;
+        height: 25px;
+        background: radial-gradient(
+          ellipse at center,
+          #ffcc00 0%,
+          #ff6600 80%,
+          transparent 100%
+        );
+        border-radius: 50% 50% 50% 50%;
+        position: absolute;
+        top: -28px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: flicker 0.2s infinite alternate;
+        opacity: 1;
+        transition: opacity 1s ease-out;
+      }
+
+      @keyframes flicker {
+        from {
+          transform: translateX(-50%) scale(1);
+          opacity: 0.9;
+        }
+        to {
+          transform: translateX(-50%) scale(1.1);
+          opacity: 1;
+        }
+      }
+
+      /* After blowout */
+      .blown .flame {
+        animation: none;
+        opacity: 0;
+        transition: opacity 1s ease-out;
+      }
+
+      @keyframes smoke {
+        0% {
+          opacity: 0.6;
+          transform: translateY(0) scale(0.8);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-30px) scale(1.2);
+        }
+      }
+
+      .smoke {
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        background: radial-gradient(
+          circle,
+          hsl(0, 16%, 96%) 30%,
+          transparent 80%
+        );
+        border-radius: 50%;
+        transform: translateX(-50%);
+        animation: smoke 1.5s forwards;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="fireworks"></canvas>
+    <h1>🎉 Happy Birthday Shruuuuu 🎉</h1>
+    <div class="gallery">
+      <div>
+        <img src="images/photo1.jpg" />
+        <div class="caption">
+          Wish you many many happy returns of the day miss gorgeous pretty lady,
+          my almighty queen. Every moment with you is magic ✨
+        </div>
+      </div>
+      <div>
+        <img src="images/photo2.jpg" />
+        <div class="caption">
+          I am so lucky and so grateful to have you in my life. You are the
+          reason my heart smiles 💖
+        </div>
+      </div>
+      <div>
+        <img src="images/photo3.jpg" />
+        <div class="caption">
+          Rise and shine forever babe. Stay blessed and happy. I am always with
+          you ❤️
+        </div>
+      </div>
+      <div>
+        <img src="images/photo4.jpg" />
+        <div class="caption">
+          You’re my sunshine on the darkest days ☀️. You complete me 💕. You are
+          irreplaceable
+        </div>
+      </div>
+      <div>
+        <img src="images/photo5.jpg" />
+        <div class="caption">
+          You heals me. I feel the happiest version of myself when I'm with you,
+          uuuummaahhhhh 💕
+        </div>
+      </div>
+      <div>
+        <img src="images/photo6.jpg" />
+        <div class="caption">
+          Thanks for adding days to my life dear, counting more++ 💕
+        </div>
+      </div>
+    </div>
+
+    <br />
+    <div class="candle-row" id="candleRow">
+      <div class="candle">
+        <div class="flame"></div>
+      </div>
+      <div class="candle">
+        <div class="flame"></div>
+      </div>
+      <div class="candle">
+        <div class="flame"></div>
+      </div>
+      <div class="candle">
+        <div class="flame"></div>
+      </div>
+      <div class="candle">
+        <div class="flame"></div>
+      </div>
+      <div class="candle">
+        <div class="flame"></div>
+      </div>
+    </div>
+
+    <div class="cake-section">
+      <img
+        src="images/cake.png"
+        id="cake"
+        class="cake-photo"
+        alt="b cake"
+      /><br />
+      <button class="cut-btn" onclick="cutCake()">Cut the Cake 🎂</button>
+    </div>
+
+    <h2>🧩 Solve the Puzzle for a Surprise 🎁</h2>
+    <div class="puzzle-container" id="puzzle"></div>
+    <div class="video-popup" id="videoPopup">
+      <span class="close-btn" onclick="closeVideo()">&times;</span>
+      <video id="surpriseVideo" src="video/surprise.mp4" controls></video>
+    </div>
+    <audio id="birthdaySong" src="audio/song.mp3"></audio>
+    <script>
+      const canvas = document.getElementById("fireworks");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      let fireworks = [];
+      function Firework(x, y) {
+        this.x = x;
+        this.y = y;
+        this.radius = 2;
+        this.color = `hsl(${Math.random() * 360},100%,50%)`;
+        this.vx = (Math.random() - 0.5) * 4;
+        this.vy = (Math.random() - 0.5) * 4;
+        this.alpha = 1;
+      }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        fireworks.forEach((f, i) => {
+          f.x += f.vx;
+          f.y += f.vy;
+          f.alpha -= 0.01;
+          ctx.beginPath();
+          ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
+          ctx.fillStyle = f.color;
+          ctx.globalAlpha = f.alpha;
+          ctx.fill();
+          if (f.alpha <= 0) fireworks.splice(i, 1);
+        });
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(animate);
+      }
+      canvas.addEventListener("click", (e) => {
+        for (let i = 0; i < 20; i++)
+          fireworks.push(new Firework(e.clientX, e.clientY));
+      });
+      animate();
+      function cutCake() {
+        const cake = document.getElementById("cake");
+        cake.classList.add("cut"); // triggers CSS effect
+        createConfetti();
+        createConfetti();
+        createConfetti();
+        createConfetti();
+        createConfetti();
+        createConfetti();
+        document.getElementById("birthdaySong").play();
+        createConfetti();
+        createConfetti();
+        createConfetti();
+        createConfetti();
+        createConfetti();
+        document.getElementById("candleRow").classList.add("blown");
+
+        const candles = document.querySelectorAll("#candleRow .candle");
+        candles.forEach((c) => {
+          const puff = document.createElement("div");
+          puff.classList.add("smoke");
+          c.appendChild(puff);
+        });
+      }
+      function createConfetti() {
+        for (let i = 0; i < 50; i++) {
+          let conf = document.createElement("div");
+          conf.classList.add("confetti");
+          conf.style.left = Math.random() * 100 + "vw";
+          conf.style.background = `hsl(${Math.random() * 360},100%,50%)`;
+          conf.style.animationDuration = 2 + Math.random() * 3 + "s";
+          document.body.appendChild(conf);
+          setTimeout(() => conf.remove(), 4000);
+        }
+      }
+      const puzzle = document.getElementById("puzzle");
+      const size = 3;
+      function initPuzzle() {
+        let order = [...Array(size * size).keys()].sort(
+          () => Math.random() - 0.5
+        );
+        puzzle.innerHTML = "";
+        order.forEach((i, idx) => {
+          const tile = document.createElement("div");
+          tile.classList.add("tile");
+          tile.style.backgroundImage = "url('images/puzzle.jpg')";
+          tile.style.backgroundPosition = `-${(i % size) * (300 / size)}px -${
+            Math.floor(i / size) * (300 / size)
+          }px`;
+          tile.draggable = true;
+          tile.dataset.index = i;
+          tile.addEventListener("dragstart", dragStart);
+          tile.addEventListener("drop", drop);
+          tile.addEventListener("dragover", (e) => e.preventDefault());
+
+          // ✅ Mobile touch support
+          tile.addEventListener("touchstart", function (e) {
+            dragged = this;
+            e.preventDefault();
+          });
+
+          tile.addEventListener("touchend", function (e) {
+            const touch = e.changedTouches[0];
+            const target = document.elementFromPoint(
+              touch.clientX,
+              touch.clientY
+            );
+
+            if (
+              target &&
+              target.classList.contains("tile") &&
+              target !== dragged
+            ) {
+              // Swap dataset.index
+              const tmp = dragged.dataset.index;
+              dragged.dataset.index = target.dataset.index;
+              target.dataset.index = tmp;
+
+              // Swap positions visually
+              [
+                dragged.style.backgroundPosition,
+                target.style.backgroundPosition,
+              ] = [
+                target.style.backgroundPosition,
+                dragged.style.backgroundPosition,
+              ];
+
+              checkSolved();
+            }
+          });
+
+          puzzle.appendChild(tile);
+        });
+      }
+      let dragged;
+      function dragStart(e) {
+        dragged = this;
+      }
+      function drop(e) {
+        const tmp = dragged.dataset.index;
+        dragged.dataset.index = this.dataset.index;
+        this.dataset.index = tmp;
+        [dragged.style.backgroundPosition, this.style.backgroundPosition] = [
+          this.style.backgroundPosition,
+          dragged.style.backgroundPosition,
+        ];
+        checkSolved();
+      }
+      function checkSolved() {
+        const correct = [...Array(size * size).keys()];
+        const current = [...puzzle.children].map((t) => +t.dataset.index);
+
+        if (correct.every((v, i) => v === current[i])) {
+          createConfetti();
+
+          alert(
+            "Yayyyy Bubuuu ❤️!! tumne kar dikhaya... Here's your surprise 🎁"
+          );
+
+          // Then ONLY open video if solved
+          const popup = document.getElementById("videoPopup");
+          const video = document.getElementById("surpriseVideo");
+          popup.style.display = "flex";
+          video.play();
+        }
+      }
+      function closeVideo() {
+        const popup = document.getElementById("videoPopup");
+        const video = document.getElementById("surpriseVideo");
+        video.pause();
+        video.currentTime = 0;
+        popup.style.display = "none";
+        location.reload();
+      }
+      initPuzzle();
+    </script>
+  </body>
+</html>
