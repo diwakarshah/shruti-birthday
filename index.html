@@ -465,7 +465,7 @@
 
         if (correct.every((v, i) => v === current[i])) {
           createConfetti();
-
+          setTimeout(()=>{
           alert(
             "Yayyyy Bubuuu ❤️!! tumne kar dikhaya... Here's your surprise 🎁"
           );
@@ -475,6 +475,7 @@
           const video = document.getElementById("surpriseVideo");
           popup.style.display = "flex";
           video.play();
+        },1000);
         }
       }
       function closeVideo() {
