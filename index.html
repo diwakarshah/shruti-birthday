@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Happy Birthday Shruuuu 🎂💕</title>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <style>
       body {
         margin: 0;
@@ -333,6 +334,27 @@
       .box-content b {
         color: #e75480;
       }
+
+      #danceAnimation {
+        display: none;
+        margin: 20px auto;
+        width: 300px;
+        height: 300px;
+      }
+      #danceAnimation.show {
+        display: block;
+        animation: fadeIn 1s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
     </style>
   </head>
   <body>
@@ -448,6 +470,7 @@
         alt="b cake"
       /><br />
       <button class="cut-btn" onclick="cutCake()">Cut the Cake 🎂</button>
+      <div id="danceAnimation" class="hidden"></div>
     </div>
 
     <h2>🧩 Solve the Puzzle for a Surprise 🎁</h2>
@@ -558,6 +581,17 @@
         createConfetti();
         createConfetti();
         document.getElementById("candleRow").classList.add("blown");
+
+        const animBox = document.getElementById("danceAnimation");
+        animBox.innerHTML = `
+    <lottie-player 
+     src="video/couple.json"
+      background="transparent"  
+      speed="1"  
+      style="width: 300px; height: 300px;"  
+      loop autoplay>
+    </lottie-player>`;
+        animBox.classList.add("show");
 
         const candles = document.querySelectorAll("#candleRow .candle");
         candles.forEach((c) => {
