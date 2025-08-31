@@ -227,9 +227,123 @@
         transform: translateX(-50%);
         animation: smoke 1.5s forwards;
       }
+
+      /* Preloader full screen */
+      #preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, #000000 0%, #1a001a 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        color: pink;
+        overflow: hidden;
+      }
+      #preloader h2 {
+        margin-top: 20px;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        color: hotpink;
+        text-shadow: 0 0 10px pink;
+      }
+
+      /* Spinner */
+      .spinner {
+        width: 80px;
+        height: 80px;
+        border: 10px solid #ff69b4;
+        border-top: 10px solid hotpink;
+        border-radius: 50%;
+        animation: spin 1.5s linear infinite;
+        z-index: 10;
+        position: relative;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Confetti canvas */
+      #preloaderConfetti {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@500&family=Handlee&display=swap");
+
+      .love-box {
+        max-width: 700px;
+        margin: 50px auto;
+        background: #fff0f5;
+        border: 3px dashed #e75480;
+        border-radius: 20px;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 6px 6px 0px #ffd6e0;
+        overflow: hidden;
+        transition: all 0.5s ease-in-out;
+        font-family: "Quicksand", sans-serif;
+      }
+
+      .box-front {
+        padding: 30px;
+        font-size: 1.4em;
+        color: #e75480;
+        font-weight: bold;
+        font-family: "Handlee", cursive;
+      }
+
+      .box-content {
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 25px;
+        font-size: 1.1em;
+        color: #4a2b2b;
+        line-height: 1.8;
+        transition: max-height 1s ease, padding 0.5s ease;
+      }
+
+      .love-box.open .box-content {
+        max-height: 1500px; /* enough for full story */
+        padding: 25px;
+      }
+
+      .love-box.open .box-front {
+        display: none;
+      }
+
+      .box-content h2 {
+        color: #e75480;
+        font-family: "Handlee", cursive;
+        margin-bottom: 15px;
+        text-shadow: 0 0 6px pink;
+      }
+      .box-content b {
+        color: #e75480;
+      }
     </style>
   </head>
   <body>
+    <!-- FESTIVE PRELOADER -->
+    <div id="preloader">
+      <div class="spinner"></div>
+      <canvas id="preloaderConfetti"></canvas>
+      <h2>You are welcome to birthday bash baby 🎉</h2>
+      <h2>Click anywhere to start magic!</h2>
+    </div>
+    <audio id="predloaderAudio" src="audio/song2.mp3"></audio>
     <canvas id="fireworks"></canvas>
     <h1>🎉 Happy Birthday Shruuuuu 🎉</h1>
     <div class="gallery">
@@ -276,6 +390,34 @@
       </div>
     </div>
 
+    <div class="love-box" onclick="this.classList.toggle('open')">
+      <div class="box-front">💌 Click to Reveal Our Love Story 💌</div>
+      <div class="box-content">
+        <h2>💞 Our Sweet Love Story</h2>
+        <p>
+          It all began at <b>Neharika’s birthday party</b>, when
+          <b>Surja</b> first met <b>Dhvani</b>. Neharika’s aunty asked them both
+          to help serve drinks to the guests. That simple moment of teamwork
+          sparked a quiet connection.
+        </p>
+        <p>
+          Two years later, a phone call about exchanging notes turned into long,
+          sweet conversations. Soon, calls weren’t enough—they began meeting on
+          the beach, where waves witnessed their growing bond. 🌊
+        </p>
+        <p>
+          Life took Dhvani to <b>Natakar</b> for studies. But distance only made
+          them stronger. Surja, with his friends <b>Janu</b> and <b>Rupa</b>,
+          went on a trip where Dhvani joined— one of the most beautiful trips of
+          their lives. 🌸
+        </p>
+        <p>
+          From then on, Surja and Dhvani became two hearts, close and caring,
+          wrapped in love and happiness. 💖
+        </p>
+      </div>
+    </div>
+
     <br />
     <div class="candle-row" id="candleRow">
       <div class="candle">
@@ -316,6 +458,49 @@
     </div>
     <audio id="birthdaySong" src="audio/song.mp3"></audio>
     <script>
+      // FESTIVE PRELOADER WITH CONFETTI
+      const preloader = document.getElementById("preloader");
+      const preloaderCanvas = document.getElementById("preloaderConfetti");
+      const preCtx = preloaderCanvas.getContext("2d");
+      preloaderCanvas.width = window.innerWidth;
+      preloaderCanvas.height = window.innerHeight;
+
+      let confettiPieces = [];
+      for (let i = 0; i < 100; i++) {
+        confettiPieces.push({
+          x: Math.random() * preloaderCanvas.width,
+          y: Math.random() * preloaderCanvas.height,
+          r: Math.random() * 6 + 4,
+          color: `hsl(${Math.random() * 360},100%,75%)`,
+          dY: Math.random() * 3 + 2,
+        });
+      }
+
+      function animatePreloaderConfetti() {
+        preCtx.clearRect(0, 0, preloaderCanvas.width, preloaderCanvas.height);
+        confettiPieces.forEach((p) => {
+          preCtx.beginPath();
+          preCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          preCtx.fillStyle = p.color;
+          preCtx.fill();
+          p.y += p.dY;
+          if (p.y > preloaderCanvas.height) p.y = 0;
+        });
+        requestAnimationFrame(animatePreloaderConfetti);
+      }
+      animatePreloaderConfetti();
+
+      // Remove preloader after 3s and play music
+      const preloaderAudio = document.getElementById("predloaderAudio");
+      let played = false;
+      window.addEventListener("click", () => {
+        if (!played) {
+          preloader.style.display = "none";
+          preloaderAudio.play();
+          played = true;
+        }
+      });
+
       const canvas = document.getElementById("fireworks");
       const ctx = canvas.getContext("2d");
       canvas.width = window.innerWidth;
@@ -360,6 +545,12 @@
         createConfetti();
         createConfetti();
         createConfetti();
+
+        if (!preloaderAudio.paused) {
+          preloaderAudio.pause();
+          preloaderAudio.currentTime = 0;
+        }
+
         document.getElementById("birthdaySong").play();
         createConfetti();
         createConfetti();
@@ -465,17 +656,17 @@
 
         if (correct.every((v, i) => v === current[i])) {
           createConfetti();
-          setTimeout(()=>{
-          alert(
-            "Yayyyy Bubuuu ❤️!! tumne kar dikhaya... Here's your surprise 🎁"
-          );
+          setTimeout(() => {
+            alert(
+              "Yayyyy Bubuuu ❤️!! tumne kar dikhaya... Here's your surprise 🎁"
+            );
 
-          // Then ONLY open video if solved
-          const popup = document.getElementById("videoPopup");
-          const video = document.getElementById("surpriseVideo");
-          popup.style.display = "flex";
-          video.play();
-        },1000);
+            // Then ONLY open video if solved
+            const popup = document.getElementById("videoPopup");
+            const video = document.getElementById("surpriseVideo");
+            popup.style.display = "flex";
+            video.play();
+          }, 1000);
         }
       }
       function closeVideo() {
